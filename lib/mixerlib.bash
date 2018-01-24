@@ -6,8 +6,8 @@
 export cachedir="$HOME/.cache/mixer-tests"
 logdir="$BATS_TEST_DIRNAME/logs"
 BUNDLE_DIR="$BATS_TEST_DIRNAME/mix-bundles"
-CLRVER=$(curl https://download.clearlinux.org/update/version/format18/latest)
-CLR_BUNDLES="$BATS_TEST_DIRNAME/clr-bundles/clr-bundles-$CLRVER/bundles"
+CLRVER=$(curl https://download.clearlinux.org/latest)
+CLR_BUNDLES="$BATS_TEST_DIRNAME/.mixer/upstream-bundles/clr-bundles-$CLRVER/bundles"
 mkdir -p $cachedir
 mkdir -p $logdir
 
@@ -26,22 +26,30 @@ VERSIONURL=localhost
 FORMAT=3" > $BATS_TEST_DIRNAME/builder.conf
 }
 
+localize_builder_conf() {
+  echo "RPMDIR = $BATS_TEST_DIRNAME/rpms
+REPODIR = $BATS_TEST_DIRNAME/local" >> $BATS_TEST_DIRNAME/builder.conf
+}
+
 mixer-init-versions() {
-  sudo -E mixer init-mix --config $BATS_TEST_DIRNAME/builder.conf --clear-version $1 --mix-version $2
+  sudo -E mixer init --config $BATS_TEST_DIRNAME/builder.conf --clear-version $1 --mix-version $2 --new-swupd
+}
+
+clean-bundle-dir() {
   for i in $(ls $BUNDLE_DIR | grep -v "os-core$"); do sudo rm -rf $BUNDLE_DIR/$i; done
 }
 
 mixer-build-chroots() {
-  sudo mixer build chroots --config $BATS_TEST_DIRNAME/builder.conf
+  sudo mixer build chroots --config $BATS_TEST_DIRNAME/builder.conf --new-swupd
 }
 
 mixer-create-update() {
-  sudo mixer build update --config $BATS_TEST_DIRNAME/builder.conf
+  sudo mixer build update --config $BATS_TEST_DIRNAME/builder.conf --new-swupd
 }
 
 mixer-add-rpms() {
-  mkdir -p ./local ./results
-  sudo mixer add-rpms --config $BATS_TEST_DIRNAME/builder.conf
+  mkdir -p ./local ./rpms
+  sudo mixer add-rpms --config $BATS_TEST_DIRNAME/builder.conf --new-swupd
 }
 
 add-bundle() {
@@ -65,10 +73,10 @@ remove-package() {
 }
 
 download-rpm() {
-  mkdir -p ./results
-  cd ./results
-  curl -O $1
-  cd ..
+  mkdir -p ./rpms
+  pushd rpms
+  sudo curl -O $1
+  popd
 }
 
 # vi: ft=sh ts=8 sw=2 sts=2 et tw=80

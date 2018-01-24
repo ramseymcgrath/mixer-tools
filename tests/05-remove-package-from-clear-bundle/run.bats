@@ -15,6 +15,7 @@ setup() {
 
 @test "Create initial mix 10" {
   mixer-init-versions $CLRVER 10
+  clean-bundle-dir
   mixer-build-chroots
   mixer-create-update
 }
@@ -22,7 +23,6 @@ setup() {
 @test "Create version 20 with Clear editors bundle added" {
   mixer-init-versions $CLRVER 20
   add-clear-bundle "editors"
-  add-clear-bundle "python-basic"
   mixer-build-chroots
   mixer-create-update > $BATS_TEST_DIRNAME/create_update-20.log
 }

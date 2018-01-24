@@ -5,12 +5,14 @@ DIRS2RUNMAKECLEAN := $(addprefix clean-,${SUBMAKEFILES})
 batcheck: ${DIRS2RUNMAKECHECK}
 
 ${DIRS2RUNMAKECHECK}: checkdir-%:
-	make -C $(dir $(subst checkdir-,,$@)) check
+	$(MAKE) -C $(dir $(subst checkdir-,,$@)) check
 
-clean: $(DIRS2RUNMAKECLEAN)
+batclean: $(DIRS2RUNMAKECLEAN)
+
 ${DIRS2RUNMAKECLEAN}: clean-%:
-	make -C $(dir $(subst checkdir-,,$@)) clean
+	$(MAKE) -C $(dir $(subst clean-,,$@)) clean
+
 .PHONY: batcheck
-.PHONY: clean
+.PHONY: batclean
 .PHONY: ${DIRS2RUNMAKECHECK}
 .PHONY: ${DIRS2RUNMAKECLEAN}

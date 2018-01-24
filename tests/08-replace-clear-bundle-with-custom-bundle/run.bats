@@ -15,11 +15,13 @@ setup() {
 
 @test "Create initial mix 10" {
   mixer-init-versions $CLRVER 10
+  clean-bundle-dir
   mixer-build-chroots
   mixer-create-update
 }
 
 @test "Create version 20 with Clear bundle that has package replaced by unique package" {
+  localize_builder_conf
   mixer-init-versions $CLRVER 20
   download-rpm "ftp://rpmfind.net/linux/fedora-secondary/development/rawhide/source/SRPMS/j/json-c-0.12-7.fc24.src.rpm"
   mixer-add-rpms

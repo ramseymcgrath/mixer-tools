@@ -14,13 +14,14 @@ setup() {
 }
 
 @test "Create initial mix 10" {
-  sudo -E mixer init --config ./builder.conf --clear-version $CLRVER --mix-version 10
+  mixer-init-versions $CLRVER 10
+  clean-bundle-dir
   mixer-build-chroots
   mixer-create-update
 }
 
 @test "Create version 20 with no changes" {
-  sudo -E  mixer init --config ./builder.conf --clear-version $CLRVER --mix-version 20
+  mixer-init-versions $CLRVER 10
   mixer-build-chroots
   mixer-create-update > $BATS_TEST_DIRNAME/create_update20.log
 }

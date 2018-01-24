@@ -15,6 +15,8 @@ setup() {
 
 @test "Create initial mix 10" {
   mixer-init-versions $CLRVER 10
+  clean-bundle-dir
+  add-clear-bundle "os-core-update"
   mixer-build-chroots
   mixer-create-update
 }
