@@ -1,15 +1,16 @@
-SUBDIRS := $(wildcard tests/*)
-CLEANDIRS := $(wildcard tests/*)
-SUBMAKEFILES := $(shell find ./tests/* -name Makefile)
+SUBMAKEFILES := $(shell find tests/ -name Makefile)
 DIRS2RUNMAKECHECK := $(addprefix checkdir-,${SUBMAKEFILES})
+DIRS2RUNMAKECLEAN := $(addprefix clean-,${SUBMAKEFILES})
 
 batcheck: ${DIRS2RUNMAKECHECK}
 
-checkdir-%:
-	make -C $(dir $(patsubst checkdir-,,$@)) batcheck
+${DIRS2RUNMAKECHECK}: checkdir-%:
+	make -C $(dir $(subst checkdir-,,$@)) check
 
-clean: $(CLEANDIRS)
-$(CLEANDIRS):
-	$(MAKE) -C $@ clean
-.PHONY: batcheck $(SUBDIRS)
-.PHONY: clean $(CLEANDIRS)
+clean: $(DIRS2RUNMAKECLEAN)
+${DIRS2RUNMAKECLEAN}: clean-%:
+	make -C $(dir $(subst checkdir-,,$@)) clean
+.PHONY: batcheck
+.PHONY: clean
+.PHONY: ${DIRS2RUNMAKECHECK}
+.PHONY: ${DIRS2RUNMAKECLEAN}
