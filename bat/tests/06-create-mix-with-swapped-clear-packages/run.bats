@@ -16,22 +16,19 @@ setup() {
 @test "Create initial mix 10" {
   mixer-init-versions $CLRVER 10
   clean-bundle-dir
+  add-bundle "os-core-update"
+  add-package "swupd-client" "os-core-update"
+  add-package "bsdiff" "os-core-update"
   mixer-build-chroots
-  mixer-create-update > $BATS_TEST_DIRNAME/create_update-10.log
+  mixer-create-update
 }
 
-@test "Create version 20 with more Clear bundles" {
+@test "Create version 20 with swupd moved from os-core-update into os-core" {
   mixer-init-versions $CLRVER 20
-  add-clear-bundle "editors"
-  add-clear-bundle "os-core-update"
+  remove-package "swupd-client" "os-core-update"
+  add-package "swupd-client" "os-core"
   mixer-build-chroots
   mixer-create-update > $BATS_TEST_DIRNAME/create_update-20.log
-}
-@test "Create version 30 with Clear bundle deleted" {
-  mixer-init-versions $CLRVER 30
-  remove-bundle "os-core-update"
-  mixer-build-chroots
-  mixer-create-update > $BATS_TEST_DIRNAME/create_update-30.log
 }
 
 # vi: ft=sh ts=8 sw=2 sts=2 et tw=80

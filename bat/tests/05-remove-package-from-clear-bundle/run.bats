@@ -22,13 +22,16 @@ setup() {
 
 @test "Create version 20 with Clear editors bundle added" {
   mixer-init-versions $CLRVER 20
-  add-clear-bundle "editors"
+  add-bundle "editors"
+  add-package "joe" "editors"
+  add-package "nano" "editors"
   mixer-build-chroots
   mixer-create-update > $BATS_TEST_DIRNAME/create_update-20.log
 }
-@test "Create version 30 with emacs removed from editors bundle" {
+
+@test "Create version 30 with nano removed from editors bundle" {
   mixer-init-versions $CLRVER 30
-  remove-package "emacs" "editors"
+  remove-package "nano" "editors"
   mixer-build-chroots
   mixer-create-update > $BATS_TEST_DIRNAME/create_update-30.log
 }

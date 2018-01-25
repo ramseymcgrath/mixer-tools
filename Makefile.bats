@@ -1,4 +1,4 @@
-SUBMAKEFILES := $(shell find tests/ -name Makefile)
+SUBMAKEFILES := $(shell find bat/tests/ -name Makefile)
 DIRS2RUNMAKECHECK := $(addprefix checkdir-,${SUBMAKEFILES})
 DIRS2RUNMAKECLEAN := $(addprefix clean-,${SUBMAKEFILES})
 

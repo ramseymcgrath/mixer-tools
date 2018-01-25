@@ -1,4 +1,0 @@
-08-replace-clear-bundle-with-custom-bundle
-==========================================
-This test creates a version 10, then version 20 with a Clear bundle that
-has its package replaced with a custom package not in Clear.

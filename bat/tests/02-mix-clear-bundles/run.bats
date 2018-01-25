@@ -17,19 +17,23 @@ setup() {
   mixer-init-versions $CLRVER 10
   clean-bundle-dir
   mixer-build-chroots
-  mixer-create-update
+  mixer-create-update > $BATS_TEST_DIRNAME/create_update-10.log
 }
 
-@test "Create version 20 with Clear bundle that has package replaced by unique package" {
-  localize_builder_conf
+@test "Create version 20 with more Clear bundles" {
   mixer-init-versions $CLRVER 20
-  download-rpm "ftp://rpmfind.net/linux/fedora-secondary/development/rawhide/source/SRPMS/j/json-c-0.12-7.fc24.src.rpm"
-  mixer-add-rpms
-  add-clear-bundle "telemetrics"
-  remove-package "telemetrics-client" "telemetrics"
-  add-package "json-c" "telemetrics"
+  add-bundle "editors"
+  add-package "joe" "editors"
+  add-bundle "os-core-update"
+  add-package "bsdiff" "os-core-update"
   mixer-build-chroots
   mixer-create-update > $BATS_TEST_DIRNAME/create_update-20.log
+}
+@test "Create version 30 with Clear bundle deleted" {
+  mixer-init-versions $CLRVER 30
+  remove-bundle "os-core-update"
+  mixer-build-chroots
+  mixer-create-update > $BATS_TEST_DIRNAME/create_update-30.log
 }
 
 # vi: ft=sh ts=8 sw=2 sts=2 et tw=80

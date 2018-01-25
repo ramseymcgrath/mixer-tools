@@ -36,7 +36,8 @@ mixer-init-versions() {
 }
 
 clean-bundle-dir() {
-  for i in $(ls $BUNDLE_DIR | grep -v "os-core$"); do sudo rm -rf $BUNDLE_DIR/$i; done
+  sudo rm -rf $BUNDLE_DIR/*
+  echo -e "filesystem\n" | sudo tee $BUNDLE_DIR/os-core > /dev/null
 }
 
 mixer-build-chroots() {
@@ -57,7 +58,7 @@ add-bundle() {
 }
 
 add-package() {
-  echo $1 | sudo tee $BUNDLE_DIR/$2 > /dev/null
+  echo $1 | sudo tee -a $BUNDLE_DIR/$2 > /dev/null
 }
 
 add-clear-bundle() {
