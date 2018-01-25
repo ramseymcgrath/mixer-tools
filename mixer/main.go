@@ -22,7 +22,7 @@ import (
 )
 
 func main() {
-	if err := os.Setenv("LD_PRELOAD", "/usr/lib64/nosync/nosync.so"); err != nil {
+	if err := os.Setenv("LD_PRELOAD", "/usr/lib64/nosync/nosync.so /usr/lib64/libdl.so"); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to load nosync.so, mixing may take longer\n")
 	}
 

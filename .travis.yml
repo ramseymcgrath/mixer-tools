@@ -8,13 +8,35 @@ go_import_path: github.com/clearlinux/mixer-tools
 
 before_install:
     - sudo apt-get update -qq
+
     - go get -u gopkg.in/alecthomas/gometalinter.v2
     - gometalinter.v2 --install
+
     - wget https://github.com/clearlinux/bsdiff/releases/download/v1.0.2/bsdiff-1.0.2.tar.xz
     - tar -xvf bsdiff-1.0.2.tar.xz
     - pushd bsdiff-1.0.2 && ./configure --prefix=/usr --disable-tests && make -j48 && sudo make install && popd
 
+    - sudo apt-get install rpm
+    - sudo apt-get install yum
+    - sudo apt-get install hardlink
+    - sudo apt-get install xz-utils
+    - sudo apt-get install libmagic-dev # createrepo_c dep
+    - sudo apt-get install librpm-dev   # createrepo_c dep
+
+    - wget https://github.com/rpm-software-management/createrepo_c/archive/0.10.0.tar.gz
+    - tar -xvf 0.10.0.tar.gz
+    - pushd createrepo_c-0.10.0 && mkdir build && pushd build && cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr/lib64 -DBUILD_SHARED_LIBS:BOOL=ON -DLIB_INSTALL_DIR:PATH=/usr/lib64 -DCMAKE_AR=/usr/bin/gcc-ar -DLIB_SUFFIX=64 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_RANLIB=/usr/bin/gcc-ranlib -DLIB_INSTALL_DIR=/usr/lib64 && make && sudo make install && popd && popd
+    - pushd createrepo_c-0.10.0 && pushd build && cmake .. -DCMAKE_INSTALL_PREFIX=/usr/lib64 && make && sudo make install && popd && popd
+
+    - wget https://github.com/kjn/nosync/archive/1.1.tar.gz
+    - tar -xvf 1.1.tar.gz
+    - pushd nosync-1.1 && make CFLAGS="-ldl" && sudo make install libdir=/usr/lib64 && popd
+
+    - wget https://github.com/clearlinux/bundle-chroot-builder/releases/download/v1.13/bundle-chroot-builder-1.13.tar.xz
+    - tar -xvf bundle-chroot-builder-1.13.tar.xz
+    - pushd bundle-chroot-builder-1.13 && ./configure --prefix=/usr --disable-static && make && sudo make install && popd
+
 script:
     - make lint
     - make check
-    - make batcheck
+    - make && sudo make install && make batcheck
