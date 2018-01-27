@@ -20,7 +20,7 @@ CERT = $BATS_TEST_DIRNAME/Swupd_Root.pem
 VERSIONS_PATH = $BATS_TEST_DIRNAME
 
 [swupd]
-BUNDLE=os-core-update
+BUNDLE=os-core
 CONTENTURL=localhost
 VERSIONURL=localhost
 FORMAT=3" > $BATS_TEST_DIRNAME/builder.conf
@@ -41,16 +41,16 @@ clean-bundle-dir() {
 }
 
 mixer-build-chroots() {
-  sudo mixer build chroots --config $BATS_TEST_DIRNAME/builder.conf --new-swupd
+  sudo -E mixer build chroots --config $BATS_TEST_DIRNAME/builder.conf --new-swupd --new-chroots
 }
 
 mixer-create-update() {
-  sudo mixer build update --config $BATS_TEST_DIRNAME/builder.conf --new-swupd
+  sudo -E mixer build update --config $BATS_TEST_DIRNAME/builder.conf --new-swupd
 }
 
 mixer-add-rpms() {
   mkdir -p ./local ./rpms
-  sudo mixer add-rpms --config $BATS_TEST_DIRNAME/builder.conf --new-swupd
+  sudo -E mixer add-rpms --config $BATS_TEST_DIRNAME/builder.conf --new-swupd
 }
 
 add-bundle() {

@@ -16,25 +16,40 @@ before_install:
     - tar -xvf bsdiff-1.0.2.tar.xz
     - pushd bsdiff-1.0.2 && ./configure --prefix=/usr --disable-tests && make -j48 && sudo make install && popd
 
-    - sudo apt-get install rpm
+    - sudo apt-get install python-lzma
+    - sudo apt-get install xz-utils
+    - sudo apt-get install autopoint
+    - sudo apt-get install libnss3-dev
+    - sudo apt-get install libnspr4-dev
+    - sudo apt-get install libmagic-dev # createrepo_c dep
+    - sudo apt-get install libpopt-dev
+    - sudo apt-get install libarchive-dev
+    - sudo apt-get install libdb5.1-dev
+    - sudo apt-get install libacl1-dev
+    # We need rpm 4.12 but Trusty only provides 4.11
+    - wget http://ftp.rpm.org/releases/rpm-4.12.x/rpm-4.12.0.2.tar.bz2
+    - tar -xvjf rpm-4.12.0.2.tar.bz2
+    - pushd rpm-4.12.0.2
+    - autoreconf -fi
+    - ./configure --with-external-db --with-acl --program-prefix= --enable-nls --without-beecrypt --without-internal-beecrypt --without-lua --enable-python --without-selinux --libdir=/usr/lib64 CPPFLAGS="-I/usr/include/nspr -I/usr/include/nss3 -I/usr/include/nss"
+    - make && sudo make install && popd
+
     - sudo apt-get install yum
     - sudo apt-get install hardlink
-    - sudo apt-get install xz-utils
-    - sudo apt-get install libmagic-dev # createrepo_c dep
     - sudo apt-get install librpm-dev   # createrepo_c dep
 
     - wget https://github.com/rpm-software-management/createrepo_c/archive/0.10.0.tar.gz
     - tar -xvf 0.10.0.tar.gz
-    - pushd createrepo_c-0.10.0 && mkdir build && pushd build && cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr/lib64 -DBUILD_SHARED_LIBS:BOOL=ON -DLIB_INSTALL_DIR:PATH=/usr/lib64 -DCMAKE_AR=/usr/bin/gcc-ar -DLIB_SUFFIX=64 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_RANLIB=/usr/bin/gcc-ranlib -DLIB_INSTALL_DIR=/usr/lib64 && make && sudo make install && popd && popd
-    - pushd createrepo_c-0.10.0 && pushd build && cmake .. -DCMAKE_INSTALL_PREFIX=/usr/lib64 && make && sudo make install && popd && popd
+    - pushd createrepo_c-0.10.0 && mkdir build && pushd build && cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_SHARED_LIBS:BOOL=ON -DLIB_INSTALL_DIR:PATH=/usr/lib64 -DCMAKE_AR=/usr/bin/gcc-ar -DLIB_SUFFIX=64 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_RANLIB=/usr/bin/gcc-ranlib -DLIB_INSTALL_DIR=/usr/lib64 && make && sudo make install && popd && popd
 
     - wget https://github.com/kjn/nosync/archive/1.1.tar.gz
     - tar -xvf 1.1.tar.gz
-    - pushd nosync-1.1 && make CFLAGS="-ldl" && sudo make install libdir=/usr/lib64 && popd
+    - pushd nosync-1.1 && make && sudo make install prefix=/usr/lib64 && popd
 
     - wget https://github.com/clearlinux/bundle-chroot-builder/releases/download/v1.13/bundle-chroot-builder-1.13.tar.xz
     - tar -xvf bundle-chroot-builder-1.13.tar.xz
     - pushd bundle-chroot-builder-1.13 && ./configure --prefix=/usr --disable-static && make && sudo make install && popd
+    - echo "/usr/lib64" | sudo tee -a /etc/ld.so.conf && sudo ldconfig
 
 script:
     - make lint
